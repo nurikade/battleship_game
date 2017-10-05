@@ -12,4 +12,5 @@
     <string name="vertical">Vertical</string>
     <string name="save">Save</string>
     <string name="validate">Silahkan pilih kapal terlebih dahulu.</string>
+    <string name="select_orientation">Silahkan pilih orientation lain.</string>
 </resources>

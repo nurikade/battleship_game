@@ -16,6 +16,7 @@ import com.nurikadewi.battleship.di.components.DaggerIOpponentComponent;
 import com.nurikadewi.battleship.di.module.OpponentModule;
 import com.nurikadewi.battleship.modules.opponent.adapter.CoordinatesAdapter;
 import com.nurikadewi.battleship.mvp.model.Coordinante;
+import com.nurikadewi.battleship.mvp.model.Point;
 import com.nurikadewi.battleship.mvp.presenter.OpponentPresenter;
 import com.nurikadewi.battleship.mvp.view.IOpponentView;
 
@@ -42,7 +43,12 @@ public class OpponentActivity extends BaseActivity implements IOpponentView, Vie
 
     int mShipSelected = 0;
     int mShipOrientation = 0;
+    int mShip = 0;
+
+    Point mCarrier, mBattleship, mCruiser, mSubmarine, mDestroyer;
+
     private List<Coordinante> mCoordinanteData;
+
 
     @Override
     protected void onViewReady(Bundle savedInstanceState, Intent intent) {
@@ -54,6 +60,13 @@ public class OpponentActivity extends BaseActivity implements IOpponentView, Vie
         mCoordinateList.setHasFixedSize(true);
         mCoordinateList.setLayoutManager(new GridLayoutManager(this, 10));
         mCoordinanteData = new ArrayList<>();
+
+        mCarrier = new Point();
+        mBattleship = new Point();
+        mCruiser = new Point();
+        mSubmarine = new Point();
+        mDestroyer = new Point();
+
         for (int x = 0; x < 10; x++) {
             for (int y = 0; y < 10; y++) {
                 Coordinante coordinante = new Coordinante();
@@ -71,7 +84,6 @@ public class OpponentActivity extends BaseActivity implements IOpponentView, Vie
 
     private int getShipSelected() {
         int selectedId = mRgShip.getCheckedRadioButtonId();
-        RadioButton radioButton;
         switch (selectedId) {
             case R.id.rb_carrier:
                 mShipSelected = 5;
@@ -89,6 +101,7 @@ public class OpponentActivity extends BaseActivity implements IOpponentView, Vie
                 mShipSelected = 2;
                 break;
         }
+        mShip = selectedId;
         return mShipSelected;
     }
 
@@ -103,6 +116,56 @@ public class OpponentActivity extends BaseActivity implements IOpponentView, Vie
                 break;
         }
         return mShipOrientation;
+    }
+
+    Point deploy(Coordinante coordinante, Point point) {
+        String coord = coordinante.getX() + "" + coordinante.getY();
+        int curentPosition = Integer.parseInt(coord);
+        List<Coordinante> list = new ArrayList<>();
+        switch (getShipOrientation()) {
+            case 0:
+                int validY = coordinante.getY() + getShipSelected();
+                if (validY <= 10) {
+                    coordinante.setIcon(R.drawable.ic_layout_brown);
+                    list.add(coordinante);
+                    for (int i = 1; i < getShipSelected(); i++) {
+                        curentPosition = curentPosition + 1;
+                        Coordinante update = mCoordinanteData.get(curentPosition);
+                        update.setIcon(R.drawable.ic_layout_brown);
+                        list.add(update);
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.select_orientation), Toast.LENGTH_LONG).show();
+                }
+                break;
+            case 1:
+                int validX = coordinante.getX() + getShipSelected();
+                if (validX <= 10) {
+                    coordinante.setIcon(R.drawable.ic_layout_brown);
+                    list.add(coordinante);
+                    for (int i = 1; i < getShipSelected(); i++) {
+                        curentPosition = curentPosition + 10;
+                        Coordinante update = mCoordinanteData.get(curentPosition);
+                        update.setIcon(R.drawable.ic_layout_brown);
+                        list.add(update);
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.select_orientation), Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
+        point.setList(list);
+        point.setOrientation(mShipOrientation);
+        return point;
+    }
+
+    void removeShip(Point point) {
+        if (point.getList() != null) {
+            List<Coordinante> coordinantes = point.getList();
+            for (Coordinante coordinante : coordinantes) {
+                coordinante.setIcon(R.drawable.ic_layout_blue);
+            }
+        }
     }
 
     @Override
@@ -128,27 +191,28 @@ public class OpponentActivity extends BaseActivity implements IOpponentView, Vie
         @Override
         public void onClick(View v, Coordinante coordinante, int position) {
             if (getShipSelected() > 0) {
-                String coord = coordinante.getX() + "" + coordinante.getY();
-                int curentPosition = Integer.parseInt(coord);
-
-                switch (getShipOrientation()) {
-                    case 0:
-                        for (int i = 0; i < getShipSelected(); i++) {
-                            curentPosition = curentPosition + 1;
-                            Coordinante update = mCoordinanteData.get(curentPosition);
-                            update.setIcon(R.drawable.ic_layout_brown);
-                        }
+                switch (mShip) {
+                    case R.id.rb_carrier:
+                        removeShip(mCarrier);
+                        mCarrier = deploy(coordinante, mCarrier);
                         break;
-                    case 1:
-                        for (int i = 0; i < getShipSelected(); i++) {
-                            curentPosition = curentPosition + 10;
-                            Coordinante update = mCoordinanteData.get(curentPosition);
-                            update.setIcon(R.drawable.ic_layout_brown);
-                        }
+                    case R.id.rb_battleship:
+                        removeShip(mBattleship);
+                        mBattleship = deploy(coordinante, mBattleship);
+                        break;
+                    case R.id.rb_cruiser:
+                        removeShip(mCruiser);
+                        mCruiser = deploy(coordinante, mCruiser);
+                        break;
+                    case R.id.rb_submarine:
+                        removeShip(mSubmarine);
+                        mSubmarine = deploy(coordinante, mSubmarine);
+                        break;
+                    case R.id.rb_destroyer:
+                        removeShip(mDestroyer);
+                        mDestroyer = deploy(coordinante, mDestroyer);
                         break;
                 }
-
-                coordinante.setIcon(R.drawable.ic_layout_brown);
                 mCoordinateAdapter.notifyDataSetChanged();
             } else {
                 Toast.makeText(getApplicationContext(), getResources().getString(R.string.validate), Toast.LENGTH_LONG).show();
