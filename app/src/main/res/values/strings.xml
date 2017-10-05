@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">BattleShip</string>
+    <string name="find_player">Find Player</string>
+    <string name="play">Play</string>
+    <string name="player">Player not found</string>
+    <string name="carrier">Carrier [5}</string>
+    <string name="battleship">Battleshipb [4]</string>
+    <string name="cruiser">Cruiser [3]</string>
+    <string name="submarine">Submarine [3]</string>
+    <string name="destroyer">Destroyer [2]</string>
+    <string name="horizontal">Horizontal</string>
+    <string name="vertical">Vertical</string>
+    <string name="save">Save</string>
+    <string name="validate">Silahkan pilih kapal terlebih dahulu.</string>
 </resources>

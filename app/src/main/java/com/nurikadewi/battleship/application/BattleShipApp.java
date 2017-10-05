@@ -14,7 +14,6 @@ import com.nurikadewi.battleship.di.module.AppModule;
 public class BattleShipApp extends Application {
 
     private IAppComponent mIAppComponent;
-    public static final String CONTACT_ID = "contact_id";
 
     @Override
     public void onCreate() {
@@ -25,7 +24,7 @@ public class BattleShipApp extends Application {
     private void initializeApplicationComponent() {
         mIAppComponent = DaggerIAppComponent
                 .builder()
-                .appModule(new AppModule(this, ""))
+                .appModule(new AppModule(this, "http://nurikadewi.com/"))
                 .build();
     }
 
